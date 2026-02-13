@@ -1,0 +1,16 @@
+spring:
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:mem:ems
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database: h2
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
