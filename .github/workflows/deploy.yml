@@ -27,10 +27,13 @@ jobs:
         password: ${{ secrets.DOCKER_TOKEN }}
 
     - name: Build Docker Image
-      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/ems:v1 .
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/ems:v2 .
+
+    - name: Create Buildx
+      run: docker buildx create --use
 
     - name: Push Image to Docker Hub
-      run: docker push ${{ secrets.DOCKER_USERNAME }}/ems:v1
+      run: docker buildx build --push --platform linux/amd64,linux/arm64 -t ${{ secrets.DOCKER_USERNAME }}/ems:v2
 
     - name: SSH and Deploy to EC2
       uses: appleboy/ssh-action@v1
@@ -41,6 +44,6 @@ jobs:
         script:
           docker stop ems || true
           docker rm ems || true
-          docker pull  ${{ secrets.DOCKER_USERNAME }}/ems:v1
-          docker run -d --name ems -p 8080:8080  ${{ secrets.DOCKER_USERNAME }}/ems:v1
+          docker pull  ${{ secrets.DOCKER_USERNAME }}/ems:v2
+          docker run -d --name ems -p 8080:8080  ${{ secrets.DOCKER_USERNAME }}/ems:v2
         
